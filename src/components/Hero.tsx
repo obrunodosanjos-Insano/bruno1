@@ -15,6 +15,7 @@ export const Hero: React.FC = () => {
       id="topo"
       className="relative min-h-[90vh] flex flex-col justify-center pt-28 pb-16 overflow-hidden border-b border-gray-800/80"
     >
+      {/* BACKGROUND SUTIL COM GRADE E GRADIENTE RADIAL AZUL (100% CSS PURO) */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute inset-0 bg-[radial-gradient(#3B82F6_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
         <div className="absolute top-1/4 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
@@ -22,13 +23,20 @@ export const Hero: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+        
+        {/* CABEÇALHO EDITORIAL & IDENTIFICAÇÃO DE ATLETA */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          {/* COLUNA DE TEXTO & APRESENTAÇÃO */}
           <div className="lg:col-span-7 space-y-6">
+            
+            {/* TAG SUPERIOR */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-950/70 border border-blue-600/30 text-blue-400 text-xs font-mono tracking-widest uppercase">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
               {athleteProfile.title}
             </div>
 
+            {/* NOME MONUMENTAL ESTILO EDITORIAL */}
             <div className="space-y-1">
               <h1 className="text-4xl sm:text-6xl xl:text-7xl font-black tracking-tight text-white uppercase font-sans leading-[1.05]">
                 {athleteProfile.name}
@@ -38,10 +46,12 @@ export const Hero: React.FC = () => {
               </p>
             </div>
 
+            {/* DESCRIÇÃO DE IMPACTO */}
             <p className="text-base sm:text-lg text-gray-300 max-w-2xl leading-relaxed">
               {athleteProfile.about.lead}
             </p>
 
+            {/* BOTÕES DE AÇÃO PRINCIPAIS */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <a
                 id="hero-btn-conquistas"
@@ -49,7 +59,12 @@ export const Hero: React.FC = () => {
                 className="px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-lg shadow-blue-900/30 transition-all duration-200 flex items-center gap-2 group"
               >
                 <span>Ver Conquistas & Provas</span>
-                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg
+                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </a>
@@ -63,6 +78,7 @@ export const Hero: React.FC = () => {
               </a>
             </div>
 
+            {/* LOCALIZAÇÃO E BASE DE TREINAMENTO */}
             <div className="pt-2 flex items-center gap-2 text-xs text-gray-400 font-mono">
               <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -70,36 +86,58 @@ export const Hero: React.FC = () => {
               </svg>
               <span>Base: {athleteProfile.location}</span>
             </div>
+
           </div>
 
+          {/* COLUNA VISUAL: CARD EDITORIAL DO ATLETA (SVG & COMPOSIÇÃO PURA 100% OFFLINE) */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-2xl bg-gradient-to-b from-gray-900 via-gray-900/90 to-[#111827] p-5 sm:p-6 border border-gray-800 shadow-2xl shadow-black">
+            <div className="relative rounded-2xl bg-gradient-to-b from-gray-900 via-gray-900/90 to-[#111827] p-6 border border-gray-800 shadow-2xl shadow-black">
+              
+              {/* CABEÇALHO DO CARD ESTILO CREDENCIAL DE COMPETIÇÃO */}
               <div className="flex items-center justify-between pb-4 border-b border-gray-800">
-                <span className="text-[11px] font-mono text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                  OFFICIAL ATHLETE PROFILE
+                <span className="text-[11px] font-mono text-gray-400 uppercase tracking-widest">
+                  OFFICIAL ATHLETE PASSPORT
                 </span>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-900/50 text-blue-300 border border-blue-700/50">
                   CATEGORY // ELITE A
                 </span>
               </div>
 
-              <div className="py-4 flex flex-col items-center justify-center relative">
-                <div className="w-full relative overflow-hidden rounded-xl border border-gray-700/80 shadow-2xl bg-gray-950">
-                  <img
-                    id="athlete-main-photo"
-                    src="/bruno_athete.jpeg"
-                    alt="Bruno - Atleta Profissional de Corrida em Prova"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-80 sm:h-96 object-cover object-center"
-                  />
-                  <div className="absolute bottom-3 left-3 bg-black/75 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span className="text-[11px] font-mono font-semibold tracking-wide">Bruno // Pro Elite</span>
-                  </div>
+              {/* ILUSTRAÇÃO VETORIAL DO CORREDOR COM GRADE DE DADOS */}
+              <div className="py-6 flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="w-full h-48 sm:h-56 flex items-center justify-center relative">
+                  
+                  {/* Círculo com efeito de radar/velocidade */}
+                  <div className="absolute w-44 h-44 rounded-full border border-dashed border-blue-500/20 animate-[spin_30s_linear_infinite]" />
+                  <div className="absolute w-32 h-32 rounded-full border border-blue-500/30" />
+                  
+                  {/* Silhueta atlética SVG minimalista estilizada */}
+                  <svg
+                    className="w-36 h-36 text-blue-500 filter drop-shadow-[0_0_12px_rgba(59,130,246,0.3)] relative z-10"
+                    viewBox="0 0 100 100"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    {/* Cabeça */}
+                    <circle cx="58" cy="18" r="7" strokeWidth="3" fill="#1E3A8A" />
+                    {/* Tronco inclinado em ritmo de corrida */}
+                    <line x1="56" y1="25" x2="48" y2="52" strokeWidth="4.5" strokeLinecap="round" />
+                    {/* Braço dianteiro */}
+                    <path d="M54 32 L68 40 L60 52" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                    {/* Braço traseiro */}
+                    <path d="M52 32 L38 34 L32 46" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                    {/* Perna dianteira em propulsão alta */}
+                    <path d="M48 52 L62 62 L66 84" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+                    {/* Perna traseira estendida */}
+                    <path d="M48 52 L32 64 L22 62" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                    {/* Linha de pista no solo */}
+                    <line x1="10" y1="88" x2="90" y2="88" strokeWidth="2" strokeDasharray="6 4" stroke="#374151" />
+                    <line x1="25" y1="94" x2="80" y2="94" strokeWidth="1.5" stroke="#1F2937" />
+                  </svg>
                 </div>
 
-                <div className="w-full grid grid-cols-2 gap-3 mt-4">
+                {/* Resumo de Frequência & Cadência */}
+                <div className="w-full grid grid-cols-2 gap-3 mt-2">
                   <div className="bg-gray-950/70 p-3 rounded-lg border border-gray-800/80">
                     <span className="text-[10px] uppercase font-mono text-gray-400 block">Passada Média</span>
                     <span className="text-base font-bold text-white font-mono">1.82m / passo</span>
@@ -111,6 +149,7 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
 
+              {/* RODA-PÉ DO CARD COM METAS DA TEMPORADA */}
               <div className="pt-3 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
                 <span className="font-mono text-[11px]">CICLO ATUAL</span>
                 <span className="text-emerald-400 font-mono font-semibold flex items-center gap-1">
@@ -118,19 +157,33 @@ export const Hero: React.FC = () => {
                   Foco: Sub 02h 10m 00s
                 </span>
               </div>
+
             </div>
           </div>
+
         </div>
 
+        {/* GRADE DE MÉTRICAS & NÚMEROS DE IMPACTO (4 CARDS) */}
         <div className="mt-14 pt-10 border-t border-gray-800/80 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           {athleteMetrics.map((metric) => (
-            <div key={metric.id} id={`hero-metric-${metric.id}`} className="bg-gray-900/60 hover:bg-gray-900 p-5 rounded-xl border border-gray-800 hover:border-blue-500/40 transition-all duration-300 group">
-              <span className="text-xs font-mono text-gray-400 block uppercase tracking-wider">{metric.label}</span>
-              <span className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight my-1 block group-hover:text-blue-400 transition-colors">{metric.value}</span>
-              <span className="text-xs text-gray-400 block">{metric.subtext}</span>
+            <div
+              key={metric.id}
+              id={`hero-metric-${metric.id}`}
+              className="bg-gray-900/60 hover:bg-gray-900 p-5 rounded-xl border border-gray-800 hover:border-blue-500/40 transition-all duration-300 group"
+            >
+              <span className="text-xs font-mono text-gray-400 block uppercase tracking-wider">
+                {metric.label}
+              </span>
+              <span className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight my-1 block group-hover:text-blue-400 transition-colors">
+                {metric.value}
+              </span>
+              <span className="text-xs text-gray-400 block">
+                {metric.subtext}
+              </span>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

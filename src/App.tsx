@@ -19,13 +19,13 @@ const timeline = [
   { year: 'INÍCIO', title: 'Primeiros quilômetros', text: 'A corrida começa como desafio pessoal e vira parte da rotina.' },
   { year: 'EVOLUÇÃO', title: 'Treino com propósito', text: 'Mais consistência, controle de ritmo e foco em melhorar cada sessão.' },
   { year: '2026', title: 'Nova fase', text: 'Objetivo de transformar evolução de treino em resultados cada vez melhores.' },
-  { year: 'PRÓXIMO', title: 'Sub-18 nos 5K', text: 'Meta clara: baixar a marca de 18:35 e continuar construindo performance.' },
+  { year: 'PRÓXIMO', title: 'Sub-17 nos 5K', text: 'Meta clara: baixar a marca de 18:35 para Sub-17:00 e continuar construindo performance.' },
 ];
 
 const goals = [
-  { title: '5 KM', current: '18:35', target: 'Sub-18:00', progress: 83 },
-  { title: '10 KM', current: 'Em evolução', target: 'Definir marca', progress: 45 },
-  { title: '21 KM', current: 'Próximo desafio', target: 'Construir base', progress: 30 },
+  { title: '5 KM', current: '18:35', target: 'Sub-17:00', progress: 83 },
+  { title: '10 KM', current: '39:45', target: '37:50', progress: 45 },
+  { title: '21 KM', current: '1:33:00', target: '1:25:00', progress: 90 },
 ];
 
 const techSkills = ['React', 'TypeScript', 'JavaScript', 'Vite', 'Git & GitHub', 'UI responsiva'];
@@ -77,7 +77,7 @@ export default function App() {
             <div className="lg:col-span-7 reveal">
               <span className="section-kicker">Atleta • Tecnologia • Evolução</span>
               <h1 className="display text-5xl sm:text-7xl xl:text-8xl font-bold leading-[.92] mt-4">BRUNO<br /><span className="text-amber-400">CORREIA</span></h1>
-              <p className="mt-6 text-xl sm:text-2xl text-slate-200 max-w-2xl font-medium">Disciplina no treino. Precisão no código.</p>
+              <p className="mt-6 text-xl sm:text-2xl text-slate-200 max-w-2xl font-medium">Evolução pautada em evidências.</p>
               <p className="mt-4 text-slate-400 max-w-xl leading-relaxed">Atleta de corrida e desenvolvedor, usando consistência, tecnologia e análise para evoluir dentro e fora da pista.</p>
               <div className="flex flex-wrap gap-3 mt-8">
                 <a href="#conquistas" className="px-6 py-3.5 rounded-xl bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider hover:bg-amber-300 transition">Ver conquistas →</a>
@@ -88,10 +88,10 @@ export default function App() {
             <div className="lg:col-span-5">
               <div className="glass rounded-3xl p-4 shadow-2xl shadow-black/30 card-hover">
                 <div className="flex justify-between items-center px-2 pb-3"><span className="text-[10px] uppercase tracking-[.2em] text-slate-500">ATHLETE PROFILE</span><span className="text-[10px] text-amber-400 font-bold">2026</span></div>
-                <div className="rounded-2xl overflow-hidden aspect-[4/5] bg-slate-900"><img src={athletePhoto} alt="Bruno, atleta" className="w-full h-full object-cover" /></div>
+                <div className="rounded-2xl overflow-hidden aspect-[4/5] bg-slate-900"><img src="/bruno_athete.jpeg" alt="Bruno, atleta" className="w-full h-full object-cover" referrerPolicy="no-referrer" /></div>
                 <div className="grid grid-cols-2 gap-3 mt-3">
                   <div className="rounded-xl bg-black/30 p-3"><span className="text-[10px] uppercase text-slate-500">Melhor 5K</span><strong className="block text-xl font-black text-amber-400">18:35</strong></div>
-                  <div className="rounded-xl bg-black/30 p-3"><span className="text-[10px] uppercase text-slate-500">Foco</span><strong className="block text-xl font-black">Sub-18</strong></div>
+                  <div className="rounded-xl bg-black/30 p-3"><span className="text-[10px] uppercase text-slate-500">Foco</span><strong className="block text-xl font-black">Sub-17</strong></div>
                 </div>
               </div>
             </div>
