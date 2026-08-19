@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import athletePhoto from './assets/images/bruno_athlete.jpg';
 import { athleteProjects, athleteSkills, athleteProfile, personalRecords } from './data/portfolioData';
+
+const athletePhoto = '/bruno_athete.jpeg';
 
 const navItems = [
   ['topo', 'Início'], ['sobre', 'Sobre'], ['evolucao', 'Evolução'],
