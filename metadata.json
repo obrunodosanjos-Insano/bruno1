@@ -1,0 +1,6 @@
+{
+  "name": "Portfólio Atleta de Corrida",
+  "description": "Portfólio pessoal moderno e responsivo para atleta profissional de corrida, com design dark mode, estatísticas e código comentado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
