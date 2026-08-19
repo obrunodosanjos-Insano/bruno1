@@ -22,6 +22,16 @@ a { color: inherit; text-decoration: none; }
 .reveal { animation: reveal .7s ease both; }
 @keyframes reveal { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
+/* A seção de resultados agora é dedicada exclusivamente às conquistas. */
+#conquistas h2 { font-size: 0; }
+#conquistas h2::after { content: "Conquistas"; font-size: 2.25rem; line-height: 1.15; }
+#conquistas .flex.flex-wrap.gap-2 button:last-child { display: none; }
+#conquistas article:nth-child(3) { display: none; }
+
+@media (min-width: 640px) {
+  #conquistas h2::after { font-size: 3rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
