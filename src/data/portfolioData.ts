@@ -22,110 +22,158 @@ export const athleteProfile = {
 };
 
 export const athleteMetrics: MetricCard[] = [
-  { id: "m1", label: "Recorde Pessoal (42k)", value: "02h 11m 45s", subtext: "Ritmo médio de 3:07 min/km" },
-  { id: "m2", label: "VO2 Máximo", value: "82.4 ml/kg", subtext: "Avaliado em laboratório olímpico" },
-  { id: "m3", label: "Volume Anual", value: "5.400+ km", subtext: "Média de 140km a 180km/semana" },
-  { id: "m4", label: "Pódios Oficiais", value: "28+", subtext: "Provas nacionais e internacionais" },
+  { id: "m1", label: "Melhor 5K Oficial", value: "18:35", subtext: "Pace 3:43 min/km (Olga Kos)" },
+  { id: "m2", label: "Meia Maratona (21K)", value: "1h33min", subtext: "Pace 4:25 min/km (Meia das Pontes)" },
+  { id: "m3", label: "Pódio em Categoria", value: "2º Lugar", subtext: "Cat. 18-28 anos (BSB Half 2025)" },
+  { id: "m4", label: "Revezamento 100K", value: "6º Colocado", subtext: "Sexteto Misto (Volta do Lago)" },
 ];
 
 export const personalRecords: PersonalRecord[] = [
   {
     id: "pr1",
-    distance: "Maratona (42.195 km)",
-    time: "02:11:45",
-    pace: "03:07 min/km",
-    event: "Maratona Internacional de Berlim",
+    distance: "5 KM (Recorde)",
+    time: "18:35",
+    pace: "03:43 min/km",
+    event: "Corrida Olga Kos Brasília Ano III",
     year: 2024
   },
   {
     id: "pr2",
-    distance: "Meia Maratona (21.097 km)",
-    time: "01:02:18",
-    pace: "02:57 min/km",
-    event: "Meia Maratona de Valência",
-    year: 2024
+    distance: "5 KM (Pódio)",
+    time: "Pace 3:50",
+    pace: "03:50 min/km",
+    event: "BSB Half Marathon Speed Challenge (2º Lugar Cat. 18-28)",
+    year: 2025
   },
   {
     id: "pr3",
-    distance: "10.000m (Pista)",
-    time: "28:34.12",
-    pace: "02:51 min/km",
-    event: "Troféu Brasil de Atletismo",
-    year: 2023
+    distance: "10 KM",
+    time: "39:45",
+    pace: "03:58 min/km",
+    event: "Marca Pessoal 10K",
+    year: 2024
   },
   {
     id: "pr4",
-    distance: "5.000m (Pista)",
-    time: "13:48.50",
-    pace: "02:45 min/km",
-    event: "Campeonato Sul-Americano",
-    year: 2023
+    distance: "21 KM (Meia Maratona)",
+    time: "1h33min",
+    pace: "04:25 min/km",
+    event: "Meia das Pontes 2024",
+    year: 2024
   }
 ];
 
 export const athleteSkills: SkillItem[] = [
-  { id: "s1", name: "Periodização & Planejamento de Ciclos", description: "Estruturação de macrociclos de 16 a 24 semanas visando o pico de performance em provas-alvo.", level: 95, category: "technical", tag: "Metodologia" },
-  { id: "s2", name: "Gestão de Ritmo & Pacing Estratégico", description: "Capacidade de manter variações de pace inferiores a 2 segundos/km mesmo sob fadiga extrema.", level: 98, category: "technical", tag: "Técnica" },
-  { id: "s3", name: "Treinamento em Altitude & Hipóxia", description: "Adaptação fisiológica com estágios acima de 2.200m para aumento da massa de hemoglobina.", level: 90, category: "technical", tag: "Fisiologia" },
-  { id: "s4", name: "Nutrição & Estratégia de Carboidratos Intra-Prova", description: "Ingestão precisa de 90g a 120g de carboidratos/hora com controle osmótico estomacal.", level: 92, category: "technical", tag: "Nutrição" },
-  { id: "s5", name: "Análise Biomecânica de Passada", description: "Otimização de oscilação vertical, tempo de contato com o solo e cadência (~184-190 spm).", level: 88, category: "technical", tag: "Biomecânica" },
-  { id: "s6", name: "Disciplina Férrea & Rotina Rígida", description: "Constância absoluta em treinos bi-diários, sono monitorado e recuperação diária.", level: 99, category: "soft", tag: "Mentalidade" },
-  { id: "s7", name: "Resiliência sob Dor & Fadiga Central", description: "Fortaleza psicológica nos quilômetros finais (o 'muro dos 35km' em maratonas).", level: 96, category: "soft", tag: "Psicológico" },
-  { id: "s8", name: "Comunicação com Imprensa & Patrocinadores", description: "Representação profissional de marcas esportivas, entrevistas e palestras corporativas.", level: 90, category: "soft", tag: "Comunicação" },
-  { id: "s9", name: "Liderança de Pelotão & Coelhos (Pacer)", description: "Coordenação de ritmo para equipes e suporte técnico a outros atletas de elite.", level: 94, category: "soft", tag: "Trabalho em Equipe" },
-  { id: "s10", name: "Plataformas de Análise (TrainingPeaks & WKO5)", description: "Monitoramento diário de TSS (Training Stress Score), CTL (Fitness) e TSB (Forma).", level: 92, category: "gear", tag: "Software" },
-  { id: "s11", name: "Monitores Cardíacos & Medidores de Lactato", description: "Testes invasivos de lactato no campo e sensores ópticos de frequência cardíaca contínua.", level: 88, category: "gear", tag: "Hardware" },
-  { id: "s12", name: "Tecnologia de Calçados com Placa de Carbono", description: "Testes de retorno de energia e eficiência mecânica em supertênis de competição.", level: 95, category: "gear", tag: "Equipamento" }
+  { id: "s1", name: "Periodização & Planejamento de Ciclos", description: "Estruturação de macrociclos visando o pico de performance em provas-alvo.", level: 95, category: "technical", tag: "Metodologia" },
+  { id: "s2", name: "Gestão de Ritmo & Pacing Estratégico", description: "Capacidade de manter variações de pace controladas mesmo sob fadiga.", level: 98, category: "technical", tag: "Técnica" },
+  { id: "s3", name: "Resiliência & Fortaleza Mental", description: "Constância psicológica e foco nos momentos mais intensos da prova.", level: 96, category: "soft", tag: "Psicológico" },
+  { id: "s4", name: "Nutrição & Hidratação Intra-Prova", description: "Estratégia de reposição de carboidratos e eletrólitos em treinos longos e provas.", level: 92, category: "technical", tag: "Nutrição" },
+  { id: "s5", name: "Disciplina Diária & Rotina", description: "Constância absoluta em treinos matinais, consistência e recuperação.", level: 99, category: "soft", tag: "Mentalidade" },
+  { id: "s6", name: "Tecnologia & Monitoramento", description: "Acompanhamento diário de métricas de pace, frequência cardíaca e carga de treino.", level: 92, category: "gear", tag: "Análise" }
 ];
 
 export const athleteProjects: ProjectItem[] = [
   {
-    id: "proj2",
-    title: "Meia das Pontes",
+    id: "proj1",
+    title: "Meia das Pontes 2024",
     category: "half",
-    categoryLabel: "Conquista",
+    categoryLabel: "Meia Maratona (21K)",
     year: "2024",
-    description: "Meia das Pontes 2024, com 12,097 km percorridos em 1h33min43s.",
-    detailedStory: "Participação na Meia das Pontes 2024, completando o percurso informado de 12,097 km em 1h33min43s.",
+    description: "Meia Maratona completada com percurso de 21,097 km em 1h33min e pace médio de 4:25 min/km.",
+    detailedStory: "Participação oficial na Meia das Pontes 2024, cobrindo os 21,097 km da Meia Maratona com ritmo consistente de 4:25 min/km e fechando a prova no tempo de 1h33min.",
     results: [
-      "Prova: Meia das Pontes 2024",
-      "Distância: 12,097 km",
-      "Tempo: 1h33min43s"
+      "Competição: Meia das Pontes 2024",
+      "Distância Oficial: 21,097 km",
+      "Tempo Final: 1h33min",
+      "Pace Médio: 4:25 min/km"
     ],
     metrics: {
-      distance: "12,097 km",
-      pace: "7:45 min/km",
-      placement: "—",
-      cadence: "—"
+      distancia: "21,097 km",
+      pace: "4:25 min/km",
+      tempo: "1h33min",
+      status: "Oficial"
     },
     linkPlaceholder: "#detalhes-meia-das-pontes"
   },
   {
+    id: "proj2",
+    title: "Volta do Lago CAIXA",
+    category: "track",
+    categoryLabel: "Revezamento 100km",
+    year: "2024",
+    description: "Desafio de 100 km em revezamento, conquistando o 6º lugar geral na categoria Sexteto Misto.",
+    detailedStory: "Participação na tradicional e exigente prova Volta do Lago CAIXA (100km), correndo em equipe pelo Sexteto Misto e conquistando a 6ª colocação geral na categoria.",
+    results: [
+      "Competição: Volta do Lago CAIXA",
+      "Distância Total: 100 km",
+      "Categoria: Sexteto Misto",
+      "Colocação da Equipe: 6º Colocado"
+    ],
+    metrics: {
+      distancia: "100 km",
+      categoria: "Sexteto Misto",
+      colocacao: "6º Colocado",
+      equipe: "Revezamento"
+    },
+    linkPlaceholder: "#detalhes-volta-do-lago"
+  },
+  {
     id: "proj3",
-    title: "Projeto Passos do Futuro: Atletismo na Base",
-    category: "project",
-    categoryLabel: "Projeto Social & Mentoria",
-    year: "2023 - Atual",
-    description: "Iniciativa voluntária que atende 60 jovens da periferia com equipamentos, treinos e bolsas de incentivo.",
-    detailedStory: "Acreditando que o esporte transforma realidades assim como transformou a minha, estruturamos uma clínica de atletismo semanal para descobrir e patrocinar jovens talentos dos 800m aos 10.000m.",
-    results: ["Mais de 60 jovens atendidos ativamente", "12 atletas federados no campeonato estadual", "Doação de mais de 150 pares de tênis esportivos"],
-    metrics: { distance: "Comunidade", pace: "Impacto Social", placement: "Fundador & Mentor", cadence: "60+ Atletas" },
-    linkPlaceholder: "#detalhes-social"
+    title: "BSB Half Marathon Speed Challenge 2025",
+    category: "5k",
+    categoryLabel: "Pódio na Categoria",
+    year: "2025",
+    description: "Prova de 5 km com ritmo veloz de 3:50 min/km, conquistando o 2º lugar na categoria 18 a 28 anos.",
+    detailedStory: "Desempenho de destaque na BSB Half Marathon Speed Challenge 2025, sustentando o pace forte de 3:50 min/km nos 5 km e conquistando o 2º lugar no pódio da categoria 18 a 28 anos.",
+    results: [
+      "Competição: BSB Half Marathon Speed Challenge 2025",
+      "Distância: 5 km",
+      "Pace: 3:50 min/km",
+      "Classificação: 2º Colocado na Categoria 18 a 28 anos"
+    ],
+    metrics: {
+      distancia: "5 km",
+      pace: "3:50 min/km",
+      categoria: "18-28 anos",
+      podio: "2º Lugar"
+    },
+    linkPlaceholder: "#detalhes-bsb-half"
+  },
+  {
+    id: "proj4",
+    title: "Corrida Pela Inclusão Olga Kos Brasília Ano III",
+    category: "5k",
+    categoryLabel: "Recorde Pessoal 5K",
+    year: "2024",
+    description: "Marca expressiva nos 5 km com tempo final de 00:18:35 e pace médio de 03:43 min/km.",
+    detailedStory: "Participação marcante na Corrida e Caminhada Pela Inclusão Olga Kos Brasília Ano III, completando os 5 km no tempo oficial de 00:18:35 a um ritmo médio de 03:43 min/km.",
+    results: [
+      "Competição: Corrida e Caminhada Pela Inclusão Olga Kos Brasília Ano III",
+      "Distância: 5 km",
+      "Tempo Final: 00:18:35",
+      "Pace Médio: 03:43 min/km"
+    ],
+    metrics: {
+      distancia: "5 km",
+      pace: "03:43 min/km",
+      tempo: "00:18:35",
+      marca: "Melhor 5K"
+    },
+    linkPlaceholder: "#detalhes-olga-kos"
   }
 ];
 
 export const socialLinks: SocialLink[] = [
-  { id: "soc1", name: "Instagram", url: "https://instagram.com/atletabruno", handle: "@atletabruno", icon: "instagram" },
-  { id: "soc2", name: "Strava", url: "https://strava.com/athletes/bruno", handle: "Bruno [Elite Runner]", icon: "strava" },
-  { id: "soc3", name: "LinkedIn", url: "https://linkedin.com/in/bruno-atleta", handle: "bruno-atleta", icon: "linkedin" },
-  { id: "soc4", name: "GitHub", url: "https://github.com/bruno", handle: "bruno-runner", icon: "github" },
-  { id: "soc5", name: "E-mail de Contato", url: "mailto:contato@bruno.com.br", handle: "contato@bruno.com.br", icon: "email" }
+  { id: "soc1", name: "Instagram", url: "https://instagram.com/o.bruno11", handle: "@o.bruno11", icon: "instagram" },
+  { id: "soc2", name: "Strava", url: "https://strava.app.link/cCslKy4GR5b", handle: "Perfil Strava", icon: "strava" },
+  { id: "soc3", name: "Garmin Connect", url: "https://connect.garmin.com/modern/profile/ded5391d-1dd5-4dd1-8083-475cc060e52e", handle: "Bruno dos anjos Del Toro", icon: "garmin" },
+  { id: "soc4", name: "E-mail", url: "mailto:obrunodosanjos@gmail.com", handle: "obrunodosanjos@gmail.com", icon: "email" }
 ];
 
 export const contactDetails = {
-  email: "contato@bruno.com.br",
-  pressEmail: "assessoria@bruno.com.br",
-  location: "São Paulo - SP, Brasil",
-  management: "Agência Apex Sports Management",
-  availability: "Aberto para Patrocínios, Palestras Corporativas e Parcerias Técnicas"
+  email: "obrunodosanjos@gmail.com",
+  pressEmail: "obrunodosanjos@gmail.com",
+  location: "Brasília - DF, Brasil",
+  management: "Assessoria Esportiva & Performance",
+  availability: "Aberto para Parcerias Esportivas, Apoio e Patrocínios"
 };

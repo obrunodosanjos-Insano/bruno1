@@ -34,18 +34,13 @@ export interface SkillItem {
 export interface ProjectItem {
   id: string;
   title: string;
-  category: 'marathon' | 'half' | 'track' | 'project';
+  category: 'marathon' | 'half' | 'track' | 'project' | '5k';
   categoryLabel: string;
   year: string;
   description: string;
   detailedStory: string;
   results: string[];
-  metrics: {
-    pace: string;
-    distance: string;
-    placement: string;
-    cadence?: string;
-  };
+  metrics: Record<string, string>;
   linkPlaceholder: string;
 }
 
@@ -54,5 +49,5 @@ export interface SocialLink {
   name: string;
   url: string;
   handle: string;
-  icon: 'github' | 'linkedin' | 'instagram' | 'strava' | 'email';
+  icon: 'github' | 'linkedin' | 'instagram' | 'strava' | 'email' | 'garmin';
 }
