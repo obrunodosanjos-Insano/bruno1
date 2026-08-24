@@ -162,6 +162,10 @@ export default function App() {
                   <div className="rounded-xl bg-black/30 p-3"><span className="text-[10px] uppercase text-slate-500">Melhor 5K</span><strong className="block text-xl font-black text-amber-400">18:35</strong></div>
                   <div className="rounded-xl bg-black/30 p-3"><span className="text-[10px] uppercase text-slate-500">Foco</span><strong className="block text-xl font-black">Sub-17</strong></div>
                 </div>
+                <div className="mt-3 rounded-xl bg-black/30 px-3.5 py-2.5 flex items-center justify-between border border-white/5">
+                  <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Treinador</span>
+                  <span className="text-xs font-bold text-slate-200 tracking-wide">Valdenor dos Santos</span>
+                </div>
               </div>
             </div>
           </div>
@@ -229,12 +233,12 @@ export default function App() {
             </div>
             <div className="mt-10 glass rounded-2xl p-6">
               <span className="section-kicker">Recordes & Marcas Pessoais</span>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-5">
                 {personalRecords.map(r => (
-                  <div key={r.id} className="rounded-xl bg-black/25 p-4">
-                    <span className="text-xs text-slate-500">{r.distance}</span>
-                    <strong className="display block text-2xl text-white mt-2">{r.time}</strong>
-                    <span className="text-xs text-amber-400">{r.pace}</span>
+                  <div key={r.id} className="rounded-xl bg-black/25 p-4 flex flex-col justify-between">
+                    <span className="text-xs text-slate-400 font-semibold">{r.distance}</span>
+                    <strong className="display block text-xl sm:text-2xl text-white my-2">{r.time}</strong>
+                    <span className="text-xs text-amber-400 font-medium">{r.pace}</span>
                   </div>
                 ))}
               </div>

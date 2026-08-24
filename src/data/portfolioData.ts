@@ -32,7 +32,7 @@ export const personalRecords: PersonalRecord[] = [
   {
     id: "pr1",
     distance: "1 KM",
-    time: "3:04",
+    time: "3:04 min",
     pace: "03:04 min/km",
     event: "Teste / Prova Rápida",
     year: 2024
@@ -40,45 +40,37 @@ export const personalRecords: PersonalRecord[] = [
   {
     id: "pr2",
     distance: "1500m Rasos",
-    time: "4:50",
+    time: "4:50 min",
     pace: "03:13 min/km",
     event: "Pista / Meio-Fundo",
     year: 2024
   },
   {
     id: "pr3",
-    distance: "5 KM (Recorde)",
-    time: "18:35",
+    distance: "5 KM",
+    time: "18:35 min",
     pace: "03:43 min/km",
     event: "Corrida Olga Kos Brasília Ano III",
     year: 2024
   },
   {
     id: "pr4",
-    distance: "5 KM (Pódio)",
-    time: "Pace 3:50",
-    pace: "03:50 min/km",
-    event: "BSB Half Marathon Speed Challenge (2º Lugar Cat. 18-28)",
-    year: 2025
-  },
-  {
-    id: "pr5",
     distance: "10 KM",
-    time: "39:45",
+    time: "39:45 min",
     pace: "03:58 min/km",
     event: "Marca Pessoal 10K",
     year: 2024
   },
   {
-    id: "pr6",
+    id: "pr5",
     distance: "15 KM",
-    time: "1h05",
+    time: "1h05min",
     pace: "04:23 min/km",
     event: "Treino / Marca Oficial",
     year: 2024
   },
   {
-    id: "pr7",
+    id: "pr6",
     distance: "21 KM (Meia Maratona)",
     time: "1h33min",
     pace: "04:25 min/km",
