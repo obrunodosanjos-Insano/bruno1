@@ -48,12 +48,38 @@ export default function App() {
   const [projectFilter, setProjectFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState<(typeof athleteProjects)[number] | null>(null);
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const [isNavVisible, setIsNavVisible] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setQuoteIndex(prev => (prev + 1) % motivationalQuotes.length);
-    }, 20000);
+    }, 10000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Always show when near the very top
+      if (currentScrollY < 60) {
+        setIsNavVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 6) {
+        // Scrolling down -> hide
+        setIsNavVisible(false);
+        setMenuOpen(false);
+      } else if (currentScrollY < lastScrollY && lastScrollY - currentScrollY > 6) {
+        // Scrolling up -> show
+        setIsNavVisible(true);
+      }
+      
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -75,7 +101,7 @@ export default function App() {
 
   return (
     <div id="portfolio-app-root" className="min-h-screen bg-[#070b12] text-slate-100 selection:bg-amber-400 selection:text-slate-950">
-      <header className="fixed top-0 left-0 right-0 z-40 border-b border-white/10 bg-[#070b12]/80 backdrop-blur-xl">
+      <header className={`fixed top-0 left-0 right-0 z-40 border-b border-white/10 bg-[#070b12]/80 backdrop-blur-xl transition-transform duration-300 ${isNavVisible ? 'translate-y-0' : '-translate-y-full shadow-none'}`}>
         <div className="section-shell h-16 flex items-center justify-between">
           <a href="#topo" className="display font-bold tracking-tight text-lg">BRUNO<span className="text-amber-400">.</span></a>
           <nav className="hidden md:flex items-center gap-1">
