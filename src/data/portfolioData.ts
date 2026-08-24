@@ -25,7 +25,7 @@ export const athleteMetrics: MetricCard[] = [
   { id: "m1", label: "Melhor 5K Oficial", value: "18:35", subtext: "Pace 3:43 min/km (Olga Kos)" },
   { id: "m2", label: "Meia Maratona (21K)", value: "1h33min", subtext: "Pace 4:25 min/km (Meia das Pontes)" },
   { id: "m3", label: "Pódio em Categoria", value: "2º Lugar", subtext: "Cat. 18-28 anos (BSB Half 2025)" },
-  { id: "m4", label: "Revezamento 100K", value: "6º Colocado", subtext: "Sexteto Misto (Volta do Lago)" },
+  { id: "m4", label: "Revezamento 100K", value: "6º Colocado", subtext: "Sexteto Misto (Volta do Lago 2026)" },
 ];
 
 export const personalRecords: PersonalRecord[] = [
@@ -113,14 +113,14 @@ export const athleteProjects: ProjectItem[] = [
   },
   {
     id: "proj2",
-    title: "Volta do Lago CAIXA",
+    title: "Volta do Lago CAIXA 2026",
     category: "track",
     categoryLabel: "Revezamento 100km",
-    year: "2024",
+    year: "2026",
     description: "Desafio de 100 km em revezamento, conquistando o 6º lugar geral na categoria Sexteto Misto.",
-    detailedStory: "Participação na tradicional e exigente prova Volta do Lago CAIXA (100km), correndo em equipe pelo Sexteto Misto e conquistando a 6ª colocação geral na categoria.",
+    detailedStory: "Participação na tradicional e exigente prova Volta do Lago CAIXA 2026 (100km), correndo em equipe pelo Sexteto Misto e conquistando a 6ª colocação geral na categoria.",
     results: [
-      "Competição: Volta do Lago CAIXA",
+      "Competição: Volta do Lago CAIXA 2026",
       "Distância Total: 100 km",
       "Categoria: Sexteto Misto",
       "Colocação da Equipe: 6º Colocado"
