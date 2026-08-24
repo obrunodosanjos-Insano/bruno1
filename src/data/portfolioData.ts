@@ -51,7 +51,7 @@ export const personalRecords: PersonalRecord[] = [
     time: "18:35 min",
     pace: "03:43 min/km",
     event: "Corrida Olga Kos Brasília Ano III",
-    year: 2024
+    year: 2025
   },
   {
     id: "pr4",
@@ -160,11 +160,11 @@ export const athleteProjects: ProjectItem[] = [
     title: "Corrida Pela Inclusão Olga Kos Brasília Ano III",
     category: "5k",
     categoryLabel: "Recorde Pessoal 5K",
-    year: "2024",
+    year: "2025",
     description: "Marca expressiva nos 5 km com tempo final de 00:18:35 e pace médio de 03:43 min/km.",
-    detailedStory: "Participação marcante na Corrida e Caminhada Pela Inclusão Olga Kos Brasília Ano III, completando os 5 km no tempo oficial de 00:18:35 a um ritmo médio de 03:43 min/km.",
+    detailedStory: "Participação marcante na Corrida e Caminhada Pela Inclusão Olga Kos Brasília Ano III (2025), completando os 5 km no tempo oficial de 00:18:35 a um ritmo médio de 03:43 min/km.",
     results: [
-      "Competição: Corrida e Caminhada Pela Inclusão Olga Kos Brasília Ano III",
+      "Competição: Corrida e Caminhada Pela Inclusão Olga Kos Brasília Ano III (2025)",
       "Distância: 5 km",
       "Tempo Final: 00:18:35",
       "Pace Médio: 03:43 min/km"
