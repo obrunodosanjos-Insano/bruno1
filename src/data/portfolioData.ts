@@ -31,6 +31,22 @@ export const athleteMetrics: MetricCard[] = [
 export const personalRecords: PersonalRecord[] = [
   {
     id: "pr1",
+    distance: "1 KM",
+    time: "3:04",
+    pace: "03:04 min/km",
+    event: "Teste / Prova Rápida",
+    year: 2024
+  },
+  {
+    id: "pr2",
+    distance: "1500m Rasos",
+    time: "4:50",
+    pace: "03:13 min/km",
+    event: "Pista / Meio-Fundo",
+    year: 2024
+  },
+  {
+    id: "pr3",
     distance: "5 KM (Recorde)",
     time: "18:35",
     pace: "03:43 min/km",
@@ -38,7 +54,7 @@ export const personalRecords: PersonalRecord[] = [
     year: 2024
   },
   {
-    id: "pr2",
+    id: "pr4",
     distance: "5 KM (Pódio)",
     time: "Pace 3:50",
     pace: "03:50 min/km",
@@ -46,7 +62,7 @@ export const personalRecords: PersonalRecord[] = [
     year: 2025
   },
   {
-    id: "pr3",
+    id: "pr5",
     distance: "10 KM",
     time: "39:45",
     pace: "03:58 min/km",
@@ -54,7 +70,15 @@ export const personalRecords: PersonalRecord[] = [
     year: 2024
   },
   {
-    id: "pr4",
+    id: "pr6",
+    distance: "15 KM",
+    time: "1h05",
+    pace: "04:23 min/km",
+    event: "Treino / Marca Oficial",
+    year: 2024
+  },
+  {
+    id: "pr7",
     distance: "21 KM (Meia Maratona)",
     time: "1h33min",
     pace: "04:25 min/km",
