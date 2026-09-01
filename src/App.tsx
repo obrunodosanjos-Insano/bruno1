@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BookOpen, Library, LogOut, Pencil, Plus, Search, Trash2, UserRound, X } from 'lucide-react';
-import { createClient, type Session } from '@supabase/supabase-js';
+import { createClient, type User } from '@supabase/supabase-js';
 
 type BookStatus = 'Não lido' | 'Lendo' | 'Lido';
 type Book = {
   id: string;
-  user_id: string;
   title: string;
   author: string;
   category?: string | null;
@@ -16,10 +15,10 @@ type Book = {
   status: BookStatus;
   shelf?: string | null;
   notes?: string | null;
-  created_at?: string;
+  created_at: string;
 };
 
-type FormState = Omit<Book, 'id' | 'user_id' | 'created_at'> & { year: string | number; pages: string | number };
+type FormState = Omit<Book, 'id' | 'created_at'> & { year: string | number; pages: string | number };
 type AuthMode = 'login' | 'signup';
 
 const emptyForm: FormState = {
@@ -30,9 +29,15 @@ const emptyForm: FormState = {
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bxizwvofwketeyorpucu.supabase.co';
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_a6Sxr9eDmZfAJuC81UCkgA_XfImPF3L';
 const supabase = createClient(supabaseUrl, supabaseKey);
+const BOOKS_METADATA_KEY = 'library_books';
+
+function readBooks(user: User | null): Book[] {
+  const value = user?.user_metadata?.[BOOKS_METADATA_KEY];
+  return Array.isArray(value) ? value : [];
+}
 
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authMode, setAuthMode] = useState<AuthMode>('login');
   const [authName, setAuthName] = useState('');
@@ -48,26 +53,26 @@ export default function App() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'Todos' | BookStatus>('Todos');
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    void supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    void supabase.auth.getUser().then(({ data, error }) => {
+      const nextUser = error ? null : data.user;
+      setUser(nextUser);
+      setBooks(readBooks(nextUser));
       setAuthLoading(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const nextUser = session?.user ?? null;
+      setUser(nextUser);
+      setBooks(readBooks(nextUser));
       setAuthLoading(false);
-      if (!nextSession) setBooks([]);
+      if (!nextUser) setMessage('');
     });
 
     return () => listener.subscription.unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (session?.user.id) void loadBooks();
-  }, [session?.user.id]);
 
   async function handleAuthSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -83,7 +88,7 @@ export default function App() {
       const { data, error } = await supabase.auth.signUp({
         email: authEmail.trim(),
         password: authPassword,
-        options: { data: { full_name: authName.trim() } }
+        options: { data: { full_name: authName.trim(), [BOOKS_METADATA_KEY]: [] } }
       });
       if (error) setAuthMessage(error.message);
       else if (!data.session) setAuthMessage('Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.');
@@ -101,25 +106,34 @@ export default function App() {
 
   async function signOut() {
     await supabase.auth.signOut();
+    setUser(null);
+    setBooks([]);
     setAuthEmail('');
     setAuthPassword('');
     setAuthMessage('');
   }
 
-  async function loadBooks() {
-    if (!session?.user.id) return;
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('books')
-      .select('*')
-      .order('created_at', { ascending: false });
+  async function persistBooks(nextBooks: Book[]) {
+    if (!user) return false;
+    setSaving(true);
+    setMessage('');
 
-    if (error) setMessage(`Não foi possível carregar seus livros: ${error.message}`);
-    else {
-      setMessage('');
-      setBooks((data || []) as Book[]);
+    const { data, error } = await supabase.auth.updateUser({
+      data: {
+        ...user.user_metadata,
+        [BOOKS_METADATA_KEY]: nextBooks
+      }
+    });
+
+    setSaving(false);
+    if (error) {
+      setMessage(`Não foi possível salvar no Supabase: ${error.message}`);
+      return false;
     }
-    setLoading(false);
+
+    if (data.user) setUser(data.user);
+    setBooks(nextBooks);
+    return true;
   }
 
   function openCreate() {
@@ -138,56 +152,53 @@ export default function App() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!session?.user.id) return;
+    if (!user) return;
     if (!form.title.trim() || !form.author.trim()) return setMessage('Informe título e autor.');
 
     const payload = {
-      user_id: session.user.id,
       title: form.title.trim(), author: form.author.trim(), category: form.category?.trim() || null,
       isbn: form.isbn?.trim() || null, publisher: form.publisher?.trim() || null,
       year: form.year ? Number(form.year) : null, pages: form.pages ? Number(form.pages) : null,
       status: form.status as BookStatus, shelf: form.shelf?.trim() || null, notes: form.notes?.trim() || null
     };
 
-    const result = editingId
-      ? await supabase.from('books').update(payload).eq('id', editingId).select().single()
-      : await supabase.from('books').insert(payload).select().single();
+    const nextBooks = editingId
+      ? books.map((book) => book.id === editingId ? { ...book, ...payload } : book)
+      : [{ id: crypto.randomUUID(), created_at: new Date().toISOString(), ...payload }, ...books];
 
-    if (result.error) return setMessage(`Erro ao salvar: ${result.error.message}`);
+    const saved = await persistBooks(nextBooks);
+    if (!saved) return;
 
-    await loadBooks();
     setModalOpen(false); setEditingId(null); setForm(emptyForm);
   }
 
   async function removeBook(book: Book) {
     if (!confirm(`Excluir “${book.title}”?`)) return;
-    const { error } = await supabase.from('books').delete().eq('id', book.id);
-    if (error) return setMessage(`Erro ao excluir: ${error.message}`);
-    setBooks((current) => current.filter((b) => b.id !== book.id));
+    await persistBooks(books.filter((item) => item.id !== book.id));
   }
 
   const filteredBooks = useMemo(() => {
     const term = search.toLowerCase().trim();
-    return books.filter((b) => {
-      const matchesSearch = !term || [b.title, b.author, b.category, b.isbn].filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(term));
-      const matchesFilter = filter === 'Todos' || b.status === filter;
+    return books.filter((book) => {
+      const matchesSearch = !term || [book.title, book.author, book.category, book.isbn].filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(term));
+      const matchesFilter = filter === 'Todos' || book.status === filter;
       return matchesSearch && matchesFilter;
     });
   }, [books, search, filter]);
 
   const stats = {
     total: books.length,
-    read: books.filter((b) => b.status === 'Lido').length,
-    reading: books.filter((b) => b.status === 'Lendo').length,
-    unread: books.filter((b) => b.status === 'Não lido').length
+    read: books.filter((book) => book.status === 'Lido').length,
+    reading: books.filter((book) => book.status === 'Lendo').length,
+    unread: books.filter((book) => book.status === 'Não lido').length
   };
 
   if (authLoading) {
     return <div className="auth-page"><div className="auth-card"><div className="auth-logo"><Library size={28}/></div><p>Carregando...</p></div></div>;
   }
 
-  if (!session) {
+  if (!user) {
     return (
       <div className="auth-page">
         <section className="auth-card">
@@ -213,23 +224,23 @@ export default function App() {
     );
   }
 
-  const displayName = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Leitor';
+  const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Leitor';
 
   return (
     <div className="app-shell">
       <header className="topbar">
         <div className="brand"><div className="brand-icon"><Library size={24}/></div><div><strong>Minha Biblioteca</strong><span>Seu acervo de casa, organizado</span></div></div>
         <div className="top-actions">
-          <div className="profile-chip"><UserRound size={18}/><div><strong>{displayName}</strong><span>{session.user.email}</span></div></div>
+          <div className="profile-chip"><UserRound size={18}/><div><strong>{displayName}</strong><span>{user.email}</span></div></div>
           <button className="secondary logout-button" onClick={() => void signOut()}><LogOut size={17}/> Sair</button>
           <button className="primary" onClick={openCreate}><Plus size={18}/> Adicionar livro</button>
         </div>
       </header>
 
       <main className="content">
-        <section className="hero"><div><p className="eyebrow">ACERVO PESSOAL</p><h1>Olá, {displayName}. Sua biblioteca é só sua.</h1><p>Cadastre, encontre e acompanhe tudo o que você tem em casa. Seus livros ficam vinculados à sua conta.</p></div><BookOpen size={108} strokeWidth={1.15}/></section>
+        <section className="hero"><div><p className="eyebrow">ACERVO PESSOAL</p><h1>Olá, {displayName}. Sua biblioteca é só sua.</h1><p>Cadastre, encontre e acompanhe tudo o que você tem em casa. Seus livros ficam vinculados à sua conta no Supabase.</p></div><BookOpen size={108} strokeWidth={1.15}/></section>
 
-        <div className="connection online">Conta conectada ao Supabase • biblioteca privada</div>
+        <div className="connection online">Conta conectada ao Supabase • biblioteca privada por usuário</div>
         {message && <div className="notice">{message}</div>}
 
         <section className="stats">
@@ -244,14 +255,14 @@ export default function App() {
           <select value={filter} onChange={(e)=>setFilter(e.target.value as typeof filter)}><option>Todos</option><option>Não lido</option><option>Lendo</option><option>Lido</option></select>
         </section>
 
-        {loading ? <div className="empty">Carregando sua biblioteca...</div> : filteredBooks.length === 0 ? (
+        {filteredBooks.length === 0 ? (
           <div className="empty"><BookOpen size={44}/><h2>{books.length ? 'Nenhum livro encontrado' : 'Sua estante ainda está vazia'}</h2><p>{books.length ? 'Tente outra busca ou filtro.' : 'Cadastre o primeiro livro da sua coleção.'}</p>{!books.length && <button className="primary" onClick={openCreate}><Plus size={18}/> Cadastrar primeiro livro</button>}</div>
         ) : (
           <section className="grid">{filteredBooks.map((book)=><article className="card" key={book.id}><div className="spine"><BookOpen size={28}/></div><div className="card-body"><div className="topline"><span className="status">{book.status}</span>{book.shelf && <span>{book.shelf}</span>}</div><h2>{book.title}</h2><p className="author">{book.author}</p><div className="meta">{book.category && <span>{book.category}</span>}{book.year && <span>{book.year}</span>}{book.pages && <span>{book.pages} págs.</span>}</div>{book.notes && <p className="notes">{book.notes}</p>}<div className="actions"><button onClick={()=>openEdit(book)}><Pencil size={16}/>Editar</button><button className="danger" onClick={()=>void removeBook(book)}><Trash2 size={16}/>Excluir</button></div></div></article>)}</section>
         )}
       </main>
 
-      {modalOpen && <div className="backdrop" onMouseDown={(e)=>e.target===e.currentTarget && setModalOpen(false)}><section className="modal"><div className="modal-head"><div><span>{editingId ? 'EDITAR LIVRO' : 'NOVO LIVRO'}</span><h2>{editingId ? 'Atualize os dados' : 'Cadastre na sua estante'}</h2></div><button className="icon" onClick={()=>setModalOpen(false)}><X size={20}/></button></div><form onSubmit={handleSubmit}><div className="form-grid"><label className="wide">Título *<input value={form.title} onChange={(e)=>setForm({...form,title:e.target.value})} required/></label><label>Autor *<input value={form.author} onChange={(e)=>setForm({...form,author:e.target.value})} required/></label><label>Categoria<input value={form.category || ''} onChange={(e)=>setForm({...form,category:e.target.value})}/></label><label>ISBN<input value={form.isbn || ''} onChange={(e)=>setForm({...form,isbn:e.target.value})}/></label><label>Editora<input value={form.publisher || ''} onChange={(e)=>setForm({...form,publisher:e.target.value})}/></label><label>Ano<input type="number" value={form.year} onChange={(e)=>setForm({...form,year:e.target.value})}/></label><label>Páginas<input type="number" value={form.pages} onChange={(e)=>setForm({...form,pages:e.target.value})}/></label><label>Status<select value={form.status} onChange={(e)=>setForm({...form,status:e.target.value as BookStatus})}><option>Não lido</option><option>Lendo</option><option>Lido</option></select></label><label>Estante / local<input value={form.shelf || ''} onChange={(e)=>setForm({...form,shelf:e.target.value})}/></label><label className="wide">Observações<textarea rows={4} value={form.notes || ''} onChange={(e)=>setForm({...form,notes:e.target.value})}/></label></div><div className="modal-actions"><button type="button" className="secondary" onClick={()=>setModalOpen(false)}>Cancelar</button><button className="primary" type="submit">{editingId ? 'Salvar alterações' : 'Cadastrar livro'}</button></div></form></section></div>}
+      {modalOpen && <div className="backdrop" onMouseDown={(e)=>e.target===e.currentTarget && setModalOpen(false)}><section className="modal"><div className="modal-head"><div><span>{editingId ? 'EDITAR LIVRO' : 'NOVO LIVRO'}</span><h2>{editingId ? 'Atualize os dados' : 'Cadastre na sua estante'}</h2></div><button className="icon" onClick={()=>setModalOpen(false)}><X size={20}/></button></div><form onSubmit={handleSubmit}><div className="form-grid"><label className="wide">Título *<input value={form.title} onChange={(e)=>setForm({...form,title:e.target.value})} required/></label><label>Autor *<input value={form.author} onChange={(e)=>setForm({...form,author:e.target.value})} required/></label><label>Categoria<input value={form.category || ''} onChange={(e)=>setForm({...form,category:e.target.value})}/></label><label>ISBN<input value={form.isbn || ''} onChange={(e)=>setForm({...form,isbn:e.target.value})}/></label><label>Editora<input value={form.publisher || ''} onChange={(e)=>setForm({...form,publisher:e.target.value})}/></label><label>Ano<input type="number" value={form.year} onChange={(e)=>setForm({...form,year:e.target.value})}/></label><label>Páginas<input type="number" value={form.pages} onChange={(e)=>setForm({...form,pages:e.target.value})}/></label><label>Status<select value={form.status} onChange={(e)=>setForm({...form,status:e.target.value as BookStatus})}><option>Não lido</option><option>Lendo</option><option>Lido</option></select></label><label>Estante / local<input value={form.shelf || ''} onChange={(e)=>setForm({...form,shelf:e.target.value})}/></label><label className="wide">Observações<textarea rows={4} value={form.notes || ''} onChange={(e)=>setForm({...form,notes:e.target.value})}/></label></div><div className="modal-actions"><button type="button" className="secondary" onClick={()=>setModalOpen(false)}>Cancelar</button><button className="primary" type="submit" disabled={saving}>{saving ? 'Salvando...' : editingId ? 'Salvar alterações' : 'Cadastrar livro'}</button></div></form></section></div>}
     </div>
   );
 }
