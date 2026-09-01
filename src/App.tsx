@@ -79,26 +79,43 @@ export default function App() {
     setAuthMessage('');
     setAuthSubmitting(true);
 
+    const email = authEmail.trim();
+    const password = authPassword;
+
     if (authMode === 'signup') {
       if (!authName.trim()) {
         setAuthMessage('Informe seu nome.');
         setAuthSubmitting(false);
         return;
       }
+
       const { data, error } = await supabase.auth.signUp({
-        email: authEmail.trim(),
-        password: authPassword,
+        email,
+        password,
         options: { data: { full_name: authName.trim(), [BOOKS_METADATA_KEY]: [] } }
       });
-      if (error) setAuthMessage(error.message);
-      else if (!data.session) setAuthMessage('Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.');
-      else setAuthMessage('Conta criada com sucesso.');
+
+      if (error) {
+        setAuthMessage(error.message);
+      } else if (data.session && data.user) {
+        setUser(data.user);
+        setBooks(readBooks(data.user));
+      } else {
+        const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+        if (!loginError && loginData.user) {
+          setUser(loginData.user);
+          setBooks(readBooks(loginData.user));
+        } else {
+          setAuthMessage('A conta foi criada, mas o Supabase ainda está exigindo confirmação de e-mail nas configurações do projeto.');
+        }
+      }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: authEmail.trim(),
-        password: authPassword
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setAuthMessage(error.message);
+      else if (data.user) {
+        setUser(data.user);
+        setBooks(readBooks(data.user));
+      }
     }
 
     setAuthSubmitting(false);
