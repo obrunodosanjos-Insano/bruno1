@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { BookOpen, Library, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
+import { BookOpen, Library, LogOut, Pencil, Plus, Search, Trash2, UserRound, X } from 'lucide-react';
+import { createClient, type Session } from '@supabase/supabase-js';
 
 type BookStatus = 'Não lido' | 'Lendo' | 'Lido';
 type Book = {
   id: string;
+  user_id: string;
   title: string;
   author: string;
   category?: string | null;
@@ -18,21 +19,28 @@ type Book = {
   created_at?: string;
 };
 
-type FormState = Omit<Book, 'id' | 'created_at'> & { year: string | number; pages: string | number };
+type FormState = Omit<Book, 'id' | 'user_id' | 'created_at'> & { year: string | number; pages: string | number };
+type AuthMode = 'login' | 'signup';
 
 const emptyForm: FormState = {
   title: '', author: '', category: '', isbn: '', publisher: '', year: '', pages: '',
   status: 'Não lido', shelf: '', notes: ''
 };
 
-// These values are safe to expose in a browser client: Supabase project URL + publishable key.
-// Never use a secret/service_role key in frontend code.
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bxizwvofwketeyorpucu.supabase.co';
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_a6Sxr9eDmZfAJuC81UCkgA_XfImPF3L';
 const supabase = createClient(supabaseUrl, supabaseKey);
-const storageKey = 'minha-biblioteca-livros';
 
 export default function App() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authMode, setAuthMode] = useState<AuthMode>('login');
+  const [authName, setAuthName] = useState('');
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authMessage, setAuthMessage] = useState('');
+  const [authSubmitting, setAuthSubmitting] = useState(false);
+
   const [books, setBooks] = useState<Book[]>([]);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -40,35 +48,78 @@ export default function App() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'Todos' | BookStatus>('Todos');
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [dbOnline, setDbOnline] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => { void loadBooks(); }, []);
+  useEffect(() => {
+    void supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthLoading(false);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      setAuthLoading(false);
+      if (!nextSession) setBooks([]);
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (session?.user.id) void loadBooks();
+  }, [session?.user.id]);
+
+  async function handleAuthSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setAuthMessage('');
+    setAuthSubmitting(true);
+
+    if (authMode === 'signup') {
+      if (!authName.trim()) {
+        setAuthMessage('Informe seu nome.');
+        setAuthSubmitting(false);
+        return;
+      }
+      const { data, error } = await supabase.auth.signUp({
+        email: authEmail.trim(),
+        password: authPassword,
+        options: { data: { full_name: authName.trim() } }
+      });
+      if (error) setAuthMessage(error.message);
+      else if (!data.session) setAuthMessage('Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.');
+      else setAuthMessage('Conta criada com sucesso.');
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: authEmail.trim(),
+        password: authPassword
+      });
+      if (error) setAuthMessage(error.message);
+    }
+
+    setAuthSubmitting(false);
+  }
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    setAuthEmail('');
+    setAuthPassword('');
+    setAuthMessage('');
+  }
 
   async function loadBooks() {
+    if (!session?.user.id) return;
     setLoading(true);
-    const { data, error } = await supabase.from('books').select('*').order('created_at', { ascending: false });
-    if (!error && data) {
-      setDbOnline(true);
+    const { data, error } = await supabase
+      .from('books')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) setMessage(`Não foi possível carregar seus livros: ${error.message}`);
+    else {
       setMessage('');
-      setBooks(data as Book[]);
-      localStorage.setItem(storageKey, JSON.stringify(data));
-    } else {
-      setDbOnline(false);
-      setMessage(`Supabase ainda não está pronto: ${error?.message || 'erro de conexão'}. Seus dados locais continuam disponíveis.`);
-      loadLocal();
+      setBooks((data || []) as Book[]);
     }
     setLoading(false);
-  }
-
-  function loadLocal() {
-    try { setBooks(JSON.parse(localStorage.getItem(storageKey) || '[]')); }
-    catch { setBooks([]); }
-  }
-
-  function saveLocal(next: Book[]) {
-    setBooks(next);
-    localStorage.setItem(storageKey, JSON.stringify(next));
   }
 
   function openCreate() {
@@ -87,9 +138,11 @@ export default function App() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!session?.user.id) return;
     if (!form.title.trim() || !form.author.trim()) return setMessage('Informe título e autor.');
 
     const payload = {
+      user_id: session.user.id,
       title: form.title.trim(), author: form.author.trim(), category: form.category?.trim() || null,
       isbn: form.isbn?.trim() || null, publisher: form.publisher?.trim() || null,
       year: form.year ? Number(form.year) : null, pages: form.pages ? Number(form.pages) : null,
@@ -100,13 +153,8 @@ export default function App() {
       ? await supabase.from('books').update(payload).eq('id', editingId).select().single()
       : await supabase.from('books').insert(payload).select().single();
 
-    if (result.error) {
-      setDbOnline(false);
-      setMessage(`Erro ao salvar no banco: ${result.error.message}`);
-      return;
-    }
+    if (result.error) return setMessage(`Erro ao salvar: ${result.error.message}`);
 
-    setDbOnline(true);
     await loadBooks();
     setModalOpen(false); setEditingId(null); setForm(emptyForm);
   }
@@ -114,13 +162,8 @@ export default function App() {
   async function removeBook(book: Book) {
     if (!confirm(`Excluir “${book.title}”?`)) return;
     const { error } = await supabase.from('books').delete().eq('id', book.id);
-    if (error) {
-      setDbOnline(false);
-      setMessage(`Erro ao excluir do banco: ${error.message}`);
-      return;
-    }
-    setDbOnline(true);
-    saveLocal(books.filter((b) => b.id !== book.id));
+    if (error) return setMessage(`Erro ao excluir: ${error.message}`);
+    setBooks((current) => current.filter((b) => b.id !== book.id));
   }
 
   const filteredBooks = useMemo(() => {
@@ -140,17 +183,53 @@ export default function App() {
     unread: books.filter((b) => b.status === 'Não lido').length
   };
 
+  if (authLoading) {
+    return <div className="auth-page"><div className="auth-card"><div className="auth-logo"><Library size={28}/></div><p>Carregando...</p></div></div>;
+  }
+
+  if (!session) {
+    return (
+      <div className="auth-page">
+        <section className="auth-card">
+          <div className="auth-logo"><Library size={28}/></div>
+          <p className="eyebrow dark">MINHA BIBLIOTECA</p>
+          <h1>{authMode === 'login' ? 'Entre na sua estante' : 'Crie sua biblioteca'}</h1>
+          <p className="auth-subtitle">Cada conta possui seu próprio acervo privado, salvo no Supabase.</p>
+
+          <div className="auth-tabs">
+            <button className={authMode === 'login' ? 'active' : ''} onClick={() => { setAuthMode('login'); setAuthMessage(''); }}>Entrar</button>
+            <button className={authMode === 'signup' ? 'active' : ''} onClick={() => { setAuthMode('signup'); setAuthMessage(''); }}>Criar conta</button>
+          </div>
+
+          <form className="auth-form" onSubmit={handleAuthSubmit}>
+            {authMode === 'signup' && <label>Seu nome<input value={authName} onChange={(e) => setAuthName(e.target.value)} placeholder="Como você quer aparecer" required /></label>}
+            <label>E-mail<input type="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="voce@email.com" required /></label>
+            <label>Senha<input type="password" minLength={6} value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="Mínimo de 6 caracteres" required /></label>
+            {authMessage && <div className="auth-message">{authMessage}</div>}
+            <button className="primary auth-submit" type="submit" disabled={authSubmitting}>{authSubmitting ? 'Aguarde...' : authMode === 'login' ? 'Entrar' : 'Criar minha conta'}</button>
+          </form>
+        </section>
+      </div>
+    );
+  }
+
+  const displayName = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Leitor';
+
   return (
     <div className="app-shell">
       <header className="topbar">
         <div className="brand"><div className="brand-icon"><Library size={24}/></div><div><strong>Minha Biblioteca</strong><span>Seu acervo de casa, organizado</span></div></div>
-        <button className="primary" onClick={openCreate}><Plus size={18}/> Adicionar livro</button>
+        <div className="top-actions">
+          <div className="profile-chip"><UserRound size={18}/><div><strong>{displayName}</strong><span>{session.user.email}</span></div></div>
+          <button className="secondary logout-button" onClick={() => void signOut()}><LogOut size={17}/> Sair</button>
+          <button className="primary" onClick={openCreate}><Plus size={18}/> Adicionar livro</button>
+        </div>
       </header>
 
       <main className="content">
-        <section className="hero"><div><p className="eyebrow">ACERVO PESSOAL</p><h1>Todos os seus livros em um só lugar.</h1><p>Cadastre, encontre e acompanhe tudo o que você tem em casa.</p></div><BookOpen size={108} strokeWidth={1.15}/></section>
+        <section className="hero"><div><p className="eyebrow">ACERVO PESSOAL</p><h1>Olá, {displayName}. Sua biblioteca é só sua.</h1><p>Cadastre, encontre e acompanhe tudo o que você tem em casa. Seus livros ficam vinculados à sua conta.</p></div><BookOpen size={108} strokeWidth={1.15}/></section>
 
-        <div className={`connection ${dbOnline ? 'online' : ''}`}>{dbOnline ? 'Supabase conectado — livros salvos no banco' : 'Conectando ao Supabase...'}</div>
+        <div className="connection online">Conta conectada ao Supabase • biblioteca privada</div>
         {message && <div className="notice">{message}</div>}
 
         <section className="stats">
@@ -165,7 +244,7 @@ export default function App() {
           <select value={filter} onChange={(e)=>setFilter(e.target.value as typeof filter)}><option>Todos</option><option>Não lido</option><option>Lendo</option><option>Lido</option></select>
         </section>
 
-        {loading ? <div className="empty">Carregando biblioteca...</div> : filteredBooks.length === 0 ? (
+        {loading ? <div className="empty">Carregando sua biblioteca...</div> : filteredBooks.length === 0 ? (
           <div className="empty"><BookOpen size={44}/><h2>{books.length ? 'Nenhum livro encontrado' : 'Sua estante ainda está vazia'}</h2><p>{books.length ? 'Tente outra busca ou filtro.' : 'Cadastre o primeiro livro da sua coleção.'}</p>{!books.length && <button className="primary" onClick={openCreate}><Plus size={18}/> Cadastrar primeiro livro</button>}</div>
         ) : (
           <section className="grid">{filteredBooks.map((book)=><article className="card" key={book.id}><div className="spine"><BookOpen size={28}/></div><div className="card-body"><div className="topline"><span className="status">{book.status}</span>{book.shelf && <span>{book.shelf}</span>}</div><h2>{book.title}</h2><p className="author">{book.author}</p><div className="meta">{book.category && <span>{book.category}</span>}{book.year && <span>{book.year}</span>}{book.pages && <span>{book.pages} págs.</span>}</div>{book.notes && <p className="notes">{book.notes}</p>}<div className="actions"><button onClick={()=>openEdit(book)}><Pencil size={16}/>Editar</button><button className="danger" onClick={()=>void removeBook(book)}><Trash2 size={16}/>Excluir</button></div></div></article>)}</section>
