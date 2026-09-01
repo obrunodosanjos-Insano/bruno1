@@ -25,9 +25,11 @@ const emptyForm: FormState = {
   status: 'Não lido', shelf: '', notes: ''
 };
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
-const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+// These values are safe to expose in a browser client: Supabase project URL + publishable key.
+// Never use a secret/service_role key in frontend code.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bxizwvofwketeyorpucu.supabase.co';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_a6Sxr9eDmZfAJuC81UCkgA_XfImPF3L';
+const supabase = createClient(supabaseUrl, supabaseKey);
 const storageKey = 'minha-biblioteca-livros';
 
 export default function App() {
@@ -39,21 +41,21 @@ export default function App() {
   const [filter, setFilter] = useState<'Todos' | BookStatus>('Todos');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [dbOnline, setDbOnline] = useState(false);
 
   useEffect(() => { void loadBooks(); }, []);
 
   async function loadBooks() {
     setLoading(true);
-    if (supabase) {
-      const { data, error } = await supabase.from('books').select('*').order('created_at', { ascending: false });
-      if (!error && data) {
-        setBooks(data as Book[]);
-        localStorage.setItem(storageKey, JSON.stringify(data));
-      } else {
-        setMessage('Não foi possível conectar ao Supabase. Mostrando os dados salvos neste navegador.');
-        loadLocal();
-      }
+    const { data, error } = await supabase.from('books').select('*').order('created_at', { ascending: false });
+    if (!error && data) {
+      setDbOnline(true);
+      setMessage('');
+      setBooks(data as Book[]);
+      localStorage.setItem(storageKey, JSON.stringify(data));
     } else {
+      setDbOnline(false);
+      setMessage(`Supabase ainda não está pronto: ${error?.message || 'erro de conexão'}. Seus dados locais continuam disponíveis.`);
       loadLocal();
     }
     setLoading(false);
@@ -94,29 +96,30 @@ export default function App() {
       status: form.status as BookStatus, shelf: form.shelf?.trim() || null, notes: form.notes?.trim() || null
     };
 
-    if (supabase) {
-      const result = editingId
-        ? await supabase.from('books').update(payload).eq('id', editingId).select().single()
-        : await supabase.from('books').insert(payload).select().single();
-      if (result.error) return setMessage(`Erro ao salvar no Supabase: ${result.error.message}`);
-      await loadBooks();
-    } else {
-      const now = new Date().toISOString();
-      const next = editingId
-        ? books.map((b) => b.id === editingId ? { ...b, ...payload } : b)
-        : [{ id: crypto.randomUUID(), created_at: now, ...payload }, ...books];
-      saveLocal(next);
+    const result = editingId
+      ? await supabase.from('books').update(payload).eq('id', editingId).select().single()
+      : await supabase.from('books').insert(payload).select().single();
+
+    if (result.error) {
+      setDbOnline(false);
+      setMessage(`Erro ao salvar no banco: ${result.error.message}`);
+      return;
     }
 
+    setDbOnline(true);
+    await loadBooks();
     setModalOpen(false); setEditingId(null); setForm(emptyForm);
   }
 
   async function removeBook(book: Book) {
     if (!confirm(`Excluir “${book.title}”?`)) return;
-    if (supabase) {
-      const { error } = await supabase.from('books').delete().eq('id', book.id);
-      if (error) return setMessage(`Erro ao excluir: ${error.message}`);
+    const { error } = await supabase.from('books').delete().eq('id', book.id);
+    if (error) {
+      setDbOnline(false);
+      setMessage(`Erro ao excluir do banco: ${error.message}`);
+      return;
     }
+    setDbOnline(true);
     saveLocal(books.filter((b) => b.id !== book.id));
   }
 
@@ -147,7 +150,7 @@ export default function App() {
       <main className="content">
         <section className="hero"><div><p className="eyebrow">ACERVO PESSOAL</p><h1>Todos os seus livros em um só lugar.</h1><p>Cadastre, encontre e acompanhe tudo o que você tem em casa.</p></div><BookOpen size={108} strokeWidth={1.15}/></section>
 
-        <div className={`connection ${supabase ? 'online' : ''}`}>{supabase ? 'Supabase conectado' : 'Modo local — configure o Supabase na Vercel para sincronizar'}</div>
+        <div className={`connection ${dbOnline ? 'online' : ''}`}>{dbOnline ? 'Supabase conectado — livros salvos no banco' : 'Conectando ao Supabase...'}</div>
         {message && <div className="notice">{message}</div>}
 
         <section className="stats">
