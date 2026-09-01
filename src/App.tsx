@@ -106,7 +106,7 @@ export default function App() {
           setUser(loginData.user);
           setBooks(readBooks(loginData.user));
         } else {
-          setAuthMessage('');
+          setAuthMessage('A conta foi criada, mas o Supabase ainda está exigindo confirmação de e-mail nas configurações do projeto.');
         }
       }
     } else {
